@@ -76,7 +76,17 @@ class _MathChallengeDialogState extends State<MathChallengeDialog> {
   @override
   void initState() {
     super.initState();
+    _loadProgress(); // Load progress when app starts
     _generateQuestion();
+  }
+
+  // Load progress from SharedPreferences
+  void _loadProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentIndex =
+          prefs.getInt('currentIndex') ?? 1; // Default to 1 if not found
+    });
   }
 
   void _generateQuestion() {
@@ -109,6 +119,7 @@ class _MathChallengeDialogState extends State<MathChallengeDialog> {
           _controller.clear();
           _generateQuestion();
         });
+        _saveProgress(); // Save progress after every step
       } else {
         SharedPreferences.getInstance().then((prefs) {
           prefs.setInt('lives', 3);
@@ -128,6 +139,12 @@ class _MathChallengeDialogState extends State<MathChallengeDialog> {
         });
       });
     }
+  }
+
+  // Save progress to SharedPreferences
+  void _saveProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('currentIndex', currentIndex);
   }
 
   @override
